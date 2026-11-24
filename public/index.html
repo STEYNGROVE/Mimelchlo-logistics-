@@ -32,7 +32,7 @@
       <p class="eyebrow">Bethlehem, Free State · South Africa</p>
       <h1 id="headline">INTELLIGENT MOVEMENT.<br><em>POWERFUL DELIVERY.</em></h1>
       <p class="tagline">Driven by commitment. Built to deliver.</p>
-      <div class="actions"><a class="button" href="#quote">Plan my freight <span aria-hidden="true">↗</span></a><a class="button secondary" href="#customer">Tracking &amp; portal</a></div>
+      <div class="actions"><a class="button" href="#quote">Plan my freight <span aria-hidden="true">↗</span></a><a class="button secondary" href="#tracking">Track shipment</a><a class="button secondary" href="#portal">Customer portal</a></div>
     </div>
     <p class="credit">Illustrative transport imagery</p>
   </section>
@@ -47,6 +47,8 @@
         <div class="fields">
           <label>Collection city <select name="origin" required></select></label>
           <label>Delivery city <select name="destination" required></select></label>
+          <label id="custom-origin" hidden>Other collection town<input name="originTown" maxlength="100"></label>
+          <label id="custom-destination" hidden>Other delivery town<input name="destinationTown" maxlength="100"></label>
           <label>Road distance (km)<input name="km" type="number" min="1" max="100000" step=".01" required placeholder="Enter a road distance"></label>
           <label>Cargo type<select name="cargo"><option value="general">General cargo</option><option value="temperature">Temperature-controlled</option><option value="open">Oversized or crane loaded</option><option value="container">ISO container</option><option value="bulk">Loose dry bulk</option><option value="special">Hazardous or specialist</option></select></label>
           <label>Gross cargo mass (kg)<input name="mass" type="number" min="1" max="1000000" step="1" required></label>
@@ -66,7 +68,7 @@
       <div>
         <div class="panel map-panel">
           <h3>South Africa route sketch</h3>
-          <p class="quiet">Selected cities are planning points. Lines show direction only.</p>
+          <p class="quiet">The sketch shows listed cities. Lines show direction only.</p>
           <svg id="map" viewBox="0 0 480 365" role="img" aria-labelledby="map-title">
             <title id="map-title">Schematic map of South Africa with selected endpoints</title>
             <path class="land" d="M57 153 91 178 130 157 141 109 173 125 206 103 236 105 247 71 278 60 310 27 365 37 391 75 415 103 388 140 414 154 420 180 406 217 373 263 332 283 286 312 232 328 153 343 100 337 75 296 57 242 39 194Z"/>

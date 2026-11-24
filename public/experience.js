@@ -38,6 +38,8 @@ for (const name of Object.keys(cities)) {
   option(origin, name, name);
   option(destination, name, name);
 }
+option(origin, 'other', 'Other town');
+option(destination, 'other', 'Other town');
 destination.value = 'Johannesburg';
 for (const [key, spec] of Object.entries(equipment)) option(trailer, key, spec[0]);
 
@@ -47,10 +49,24 @@ function svg(tag, attributes) {
   return element;
 }
 
+function locationName(select) {
+  return select.value === 'other' ? form.elements[select.name + 'Town'].value.trim() : select.value;
+}
+
 function updateRoute() {
   const markers = byId('markers');
   const route = byId('route');
-  const endpoints = Array.from(new Set([origin.value, destination.value]));
+  for (const select of [origin, destination]) {
+    const custom = select.value === 'other';
+    const field = form.elements[select.name + 'Town'];
+    byId('custom-' + select.name).hidden = !custom;
+    field.disabled = !custom;
+    field.required = custom;
+    field.setCustomValidity(custom && field.value && !field.value.trim() ? 'Enter a town name.' : '');
+  }
+  const start = locationName(origin);
+  const finish = locationName(destination);
+  const endpoints = Array.from(new Set([origin.value, destination.value])).filter(name => Object.hasOwn(cities, name));
   markers.replaceChildren();
   endpoints.forEach((name, index) => {
     const [x, y] = cities[name];
@@ -59,19 +75,23 @@ function updateRoute() {
     label.textContent = name;
     markers.append(svg('circle', {cx:x, cy:y, r:6}), label);
   });
-  const [x1, y1] = cities[origin.value];
-  const [x2, y2] = cities[destination.value];
+  const [x1, y1] = cities[origin.value] || [0, 0];
+  const [x2, y2] = cities[destination.value] || [0, 0];
+  route.toggleAttribute('hidden', endpoints.length < 2);
   for (const [key, value] of Object.entries({x1, y1, x2, y2})) route.setAttribute(key, value);
-  const params = new URLSearchParams({api:'1', origin:origin.value + ', South Africa', destination:destination.value + ', South Africa', travelmode:'driving'});
+  const params = new URLSearchParams({api:'1', origin:start + ', South Africa', destination:finish + ', South Africa', travelmode:'driving'});
   byId('directions').href = 'https://www.google.com/maps/dir/?' + params;
-  destination.setCustomValidity(origin.value === destination.value ? 'Choose a different delivery city.' : '');
+  byId('directions').hidden = !start || !finish;
+  destination.setCustomValidity(start && start.toLowerCase() === finish.toLowerCase() ? 'Choose a different delivery town.' : '');
 }
 
+function resetDistance() {
+  km.value = '';
+  updateRoute();
+}
 for (const select of [origin, destination]) {
-  select.addEventListener('change', () => {
-    km.value = '';
-    updateRoute();
-  });
+  select.addEventListener('change', resetDistance);
+  form.elements[select.name + 'Town'].addEventListener('input', resetDistance);
 }
 updateRoute();
 
@@ -138,7 +158,7 @@ form.addEventListener('submit', event => {
     }
   }
   const trip = [
-    `${origin.value} → ${destination.value} · ${distance} km entered`,
+    `${locationName(origin)} → ${locationName(destination)} · ${distance} km entered`,
     `Linehaul ${rand(base)}`,
     `Diesel surcharge ${rand(Math.round(fuel * 100))}`,
     `Tolls ${rand(Math.round(tolls * 100))}`,
