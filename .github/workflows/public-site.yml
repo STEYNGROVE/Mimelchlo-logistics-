@@ -10,7 +10,7 @@ permissions:
   contents: read
 jobs:
   browser:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
@@ -31,16 +31,19 @@ jobs:
             sleep 1
           done
           NODE_PATH=/tmp/mimelchlo-audit/node_modules node tests/public-site.cjs http://127.0.0.1:8765/
-          if [ "$GITHUB_REF" = refs/heads/main ]; then
+          target=http://127.0.0.1:8765/
+          case "$GITHUB_REF" in
+            refs/heads/main) target=https://mimelchlo-logistics.pages.dev/ ;;
+            refs/heads/nexus/premium-logistics) target=https://nexus-premium-logistics.mimelchlo-logistics.pages.dev/ ;;
+          esac
+          if [[ "$target" == https:* ]]; then
             for attempt in $(seq 1 24); do
-              curl -fsS "https://mimelchlo-logistics.pages.dev/?check=$GITHUB_SHA" | cmp -s public/index.html && break
+              curl -fsS "${target}?check=$GITHUB_SHA" | cmp -s public/index.html && break
               sleep 5
             done
-            curl -fsS "https://mimelchlo-logistics.pages.dev/?check=$GITHUB_SHA" | cmp public/index.html
-            NODE_PATH=/tmp/mimelchlo-audit/node_modules node tests/public-site.cjs https://mimelchlo-logistics.pages.dev/ live-
+            curl -fsS "${target}?check=$GITHUB_SHA" | cmp public/index.html
+            NODE_PATH=/tmp/mimelchlo-audit/node_modules node tests/public-site.cjs "$target" hosted-
           fi
-          target=http://127.0.0.1:8765/
-          if [ "$GITHUB_REF" = refs/heads/main ]; then target=https://mimelchlo-logistics.pages.dev/; fi
           chromium=$(NODE_PATH=/tmp/mimelchlo-audit/node_modules node -p "require('playwright').chromium.executablePath()")
           export CHROME_PATH="$chromium"
           lighthouse=/tmp/mimelchlo-audit/node_modules/.bin/lighthouse
