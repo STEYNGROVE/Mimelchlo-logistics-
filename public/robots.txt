@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://mimelchlo-logistics.pages.dev/sitemap.xml

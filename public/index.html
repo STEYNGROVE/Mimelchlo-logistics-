@@ -1,1 +1,152 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mimelchlo Logistics | Bethlehem</title><meta name="description" content="Mimelchlo Logistics, established in 2015 in Bethlehem, Free State. Freight planning and transport enquiries."><link rel="icon" href="logo.png"><link rel="stylesheet" href="style.css"></head><body><header><img src="logo.png" alt="Mimelchlo Logistics logo"><strong>MIMELCHLO LOGISTICS</strong><nav><a href="#quote">Freight estimator</a> · <a href="#contact">Contact</a></nav></header><main><section class="hero"><img class="hero-logo" src="logo.png" alt="Mimelchlo Logistics official logo"><small>EST. 2015 · BETHLEHEM · SOUTH AFRICA</small><h1>Driven by commitment.<br><em>Built to deliver.</em></h1><p>Freight planning and transport enquiries.</p><a class="button" href="#quote">Plan your shipment</a></section><section id="quote"><h2>Freight estimator</h2><p>Illustrative planning estimate only. Rates, distance, tolls and VAT treatment require confirmation.</p><form id="q"><label>Origin<input name="origin" required></label><label>Destination<input name="destination" required></label><label>Distance (km)<input name="km" type="number" min="1" max="100000" step=".01" value="248" required></label><label>Rate per km (R)<input name="rate" type="number" min="0" max="100000" step=".01" value="45" required></label><label>Diesel surcharge (R)<input name="diesel" type="number" min="0" max="10000000" step=".01" value="1840" required></label><label>Tolls (R)<input name="tolls" type="number" min="0" max="10000000" step=".01" value="685" required></label><button>Calculate estimate</button></form><output id="result" aria-live="polite"></output></section><section id="contact"><h2>Company & contact</h2><p>Mimelchlo Logistics (Pty) Ltd · Registration 2015/210713/07 · Established 25 June 2015</p><p>B-BBEE Level 4 · 100% procurement recognition · supplied certificate valid through 28 May 2027.</p><p>Registered address: 39 Reinecke Street, Bethlehem, Free State, 9701, South Africa.</p><p>Directory-listed telephone (pending confirmation): <a href="tel:+27795148891">+27 79 514 8891</a></p></section></main><footer>Mimelchlo Logistics · Powered by PRIME8PIXELS · <a href="https://mimelchlo-nexus.hatchable.site/operations.html">Staff portal</a></footer><script src="quote.js"></script></body></html>
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mimelchlo Logistics | South African Freight Planning</title>
+<meta name="description" content="Plan road freight with Mimelchlo Logistics in Bethlehem, Free State. Compare trailer types, estimate transport costs and prepare a freight enquiry.">
+<link rel="canonical" href="https://mimelchlo-logistics.pages.dev/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Mimelchlo Logistics | Intelligent movement. Powerful delivery.">
+<meta property="og:description" content="Plan your next South African road freight movement.">
+<meta property="og:url" content="https://mimelchlo-logistics.pages.dev/">
+<meta property="og:image" content="https://mimelchlo-logistics.pages.dev/freight.webp">
+<meta name="theme-color" content="#121214">
+<link rel="icon" href="/brand.webp">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="stylesheet" href="/style.css">
+<script src="/quote.js" defer></script>
+<script src="/experience.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top">
+  <a class="brand" href="/" aria-label="Mimelchlo Logistics home"><img src="/brand.webp" width="52" height="52" alt=""><strong>MIMELCHLO <span>LOGISTICS</span></strong></a>
+  <nav aria-label="Main navigation"><a href="#quote">Freight planner</a><a href="#equipment">Equipment</a><a href="#customer">Customer services</a></nav>
+  <button class="secondary" type="button" id="bandwidth" hidden aria-pressed="false">Low data</button>
+</header>
+<main id="main">
+  <section class="hero" aria-labelledby="headline">
+    <div class="hero-inner">
+      <img class="hero-logo" src="/brand.webp" width="104" height="104" alt="Official Mimelchlo Logistics logo">
+      <p class="eyebrow">Bethlehem, Free State · South Africa</p>
+      <h1 id="headline">INTELLIGENT MOVEMENT.<br><em>POWERFUL DELIVERY.</em></h1>
+      <p class="tagline">Driven by commitment. Built to deliver.</p>
+      <div class="actions"><a class="button" href="#quote">Plan my freight <span aria-hidden="true">↗</span></a><a class="button secondary" href="#customer">Tracking &amp; portal</a></div>
+    </div>
+    <p class="credit">Illustrative transport imagery</p>
+  </section>
+
+  <section class="section" id="quote">
+    <p class="eyebrow">Road freight planning</p>
+    <h2>Build your movement.</h2>
+    <p>Choose collection and delivery points, configure the load and model the trip cost in rand.</p>
+    <noscript><p>Enable JavaScript for route selection, load planning and calculations.</p></noscript>
+    <div class="split">
+      <form id="q" method="post" class="panel" aria-label="Freight estimate">
+        <div class="fields">
+          <label>Collection city <select name="origin" required></select></label>
+          <label>Delivery city <select name="destination" required></select></label>
+          <label>Road distance (km)<input name="km" type="number" min="1" max="100000" step=".01" required placeholder="Enter a road distance"></label>
+          <label>Cargo type<select name="cargo"><option value="general">General cargo</option><option value="temperature">Temperature-controlled</option><option value="open">Oversized or crane loaded</option><option value="container">ISO container</option><option value="bulk">Loose dry bulk</option><option value="special">Hazardous or specialist</option></select></label>
+          <label>Gross cargo mass (kg)<input name="mass" type="number" min="1" max="1000000" step="1" required></label>
+          <label>Standard pallets (1,200 × 1,000 mm)<input name="pallets" type="number" min="0" max="1000" step="1" value="0" required></label>
+        </div>
+        <details open><summary>Cost assumptions</summary>
+          <p class="quiet">Example inputs from the previous estimator. Enter the rates for your own scenario.</p>
+          <div class="fields">
+            <label>Rate per km (R)<input name="rate" type="number" min="0" max="100000" step=".01" value="45" required></label>
+            <label>Diesel surcharge (R)<input name="diesel" type="number" min="0" max="10000000" step=".01" value="1840" required></label>
+            <label>Tolls (R)<input name="tolls" type="number" min="0" max="10000000" step=".01" value="685" required></label>
+          </div>
+        </details>
+        <button type="submit" disabled>Calculate estimate</button>
+        <p class="quiet">Illustrative only. Confirm road distance, tolls, actual rates and VAT treatment before dispatch.</p>
+      </form>
+      <div>
+        <div class="panel map-panel">
+          <h3>South Africa route sketch</h3>
+          <p class="quiet">Selected cities are planning points. Lines show direction only.</p>
+          <svg id="map" viewBox="0 0 480 365" role="img" aria-labelledby="map-title">
+            <title id="map-title">Schematic map of South Africa with selected endpoints</title>
+            <path class="land" d="M57 153 91 178 130 157 141 109 173 125 206 103 236 105 247 71 278 60 310 27 365 37 391 75 415 103 388 140 414 154 420 180 406 217 373 263 332 283 286 312 232 328 153 343 100 337 75 296 57 242 39 194Z"/>
+            <path class="border" d="M313 219 329 205 344 215 336 237 317 246 302 232Z"/>
+            <line id="route" class="route"/>
+            <g id="markers"></g>
+          </svg>
+          <a id="directions" href="https://www.google.com/maps/dir/" target="_blank" rel="noopener noreferrer">Check road distance in Google Maps ↗</a>
+          <p class="quiet">Verify truck restrictions, loading times and driver schedules separately.</p>
+        </div>
+        <div id="result-card" class="panel result" hidden>
+          <h3>Trip estimate</h3><output id="result" for="q"></output>
+          <h4>Pallet floor plan</h4><p id="load-note" class="quiet"></p><div id="load" aria-hidden="true"></div>
+        </div>
+        <p id="planner-status" class="sr-only" role="status"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="equipment" class="section showroom">
+    <p class="eyebrow">Vehicle &amp; trailer guide</p>
+    <h2>Match the rig to the job.</h2>
+    <p>Representative configurations. Dimensions and payloads are illustrative planning assumptions. Confirm actual equipment, axle limits and loading requirements with dispatch.</p>
+    <div class="split">
+      <div class="panel">
+        <label>Trailer configuration<select id="trailer"></select></label>
+        <svg class="truck" viewBox="0 0 390 106" aria-hidden="true">
+          <path d="M3 81V43l24-29h57v67zm11-38h49V24H32z" fill="currentColor" fill-rule="evenodd"/>
+          <path d="M90 77h294v10H90z" fill="#a71b32"/>
+          <g id="trailer-body"></g>
+          <g fill="#48484e" stroke="#bfc1ca" stroke-width="3"><circle cx="31" cy="87" r="13"/><circle cx="99" cy="87" r="13"/><circle cx="126" cy="87" r="13"/><circle cx="333" cy="87" r="13"/><circle cx="360" cy="87" r="13"/></g>
+        </svg>
+      </div>
+      <div class="panel"><h3 id="trailer-name">Equipment suitability</h3><p id="trailer-purpose"></p><dl id="specs"></dl><a href="#enquiry" id="trailer-enquiry">Prepare an enquiry for this configuration ↗</a></div>
+    </div>
+  </section>
+
+  <section id="enquiry" class="section">
+    <p class="eyebrow">Commercial freight</p>
+    <h2>Prepare your freight brief.</h2>
+    <div class="split">
+      <form id="brief" method="post" class="panel" aria-label="Freight enquiry draft">
+        <label>Enquiry type<select name="kind"><option>Spot quotation</option><option>Repeat transport</option><option>Backhaul enquiry</option><option>Commercial contract</option></select></label>
+        <label>Company<input name="company" required maxlength="120" autocomplete="organization"></label>
+        <label>Preferred collection date<input name="date" type="date"></label>
+        <label>Collection and delivery addresses, cargo dimensions and requirements<textarea name="notes" required maxlength="2000" rows="5"></textarea></label>
+        <p class="quiet">Your draft stays on this device until you share it. Online submission is currently unavailable.</p>
+        <div class="actions"><button type="submit" disabled>Download enquiry draft</button><button type="button" class="secondary" id="voice" hidden>Dictate requirements</button></div>
+        <p role="status" id="brief-status"></p>
+      </form>
+      <div class="panel">
+        <h3>Logistics concierge</h3>
+        <p>Use the local planning guide for freight questions.</p>
+        <label for="topic">What do you need help with?</label>
+        <select id="topic">
+          <option value="cargo">Cargo and equipment</option><option value="cost">Transport costs</option><option value="docs">Transport paperwork</option><option value="quotes">Quotation requirements</option><option value="customer">Customer services</option>
+        </select>
+        <p id="guidance" aria-live="polite"></p>
+        <div class="actions"><a href="#quote">Open freight planner</a><a href="#equipment">Compare trailers</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="customer">
+    <p class="eyebrow">Customer services</p>
+    <h2>Shipment access.</h2>
+    <div class="split">
+      <div class="panel" id="tracking"><h3>Shipment tracking</h3><p>Online tracking is currently unavailable. For shipment updates, use the dispatch contact on your booking confirmation and have your shipment reference ready.</p></div>
+      <div class="panel" id="portal"><h3>Customer portal</h3><p>Online registration and document access are currently unavailable. Existing customers can request their documents through the contact on their booking confirmation.</p></div>
+    </div>
+  </section>
+  <section class="section" id="contact" itemscope itemtype="https://schema.org/Organization">
+    <meta itemprop="url" content="https://mimelchlo-logistics.pages.dev/">
+    <meta itemprop="logo" content="https://mimelchlo-logistics.pages.dev/logo.png">
+    <h2 itemprop="name">Mimelchlo Logistics (Pty) Ltd</h2>
+    <p>Registration 2015/210713/07 · Established 25 June 2015</p>
+    <p>B-BBEE Level 4 · 100% procurement recognition · supplied certificate valid through 28 May 2027.</p>
+    <p itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">Registered address · <span itemprop="streetAddress">39 Reinecke Street</span>, <span itemprop="addressLocality">Bethlehem</span>, <span itemprop="addressRegion">Free State</span>, <span itemprop="postalCode">9701</span>, <span itemprop="addressCountry">South Africa</span></p>
+  </section>
+</main>
+<footer><span>Mimelchlo Logistics</span><a href="/af/">Afrikaans planning guide</a><span>Powered by PRIME8PIXELS</span></footer>
+</body>
+</html>

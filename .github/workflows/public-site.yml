@@ -1,0 +1,61 @@
+name: Public site validation
+on:
+  pull_request:
+    paths: ['public/**', 'tests/public-site.cjs', '.github/workflows/public-site.yml']
+  push:
+    branches: [main, 'nexus/premium-logistics']
+    paths: ['public/**', 'tests/public-site.cjs', '.github/workflows/public-site.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python -m unittest discover -s tests
+      - run: npm install --prefix /tmp/mimelchlo-audit --no-audit --no-fund playwright@1.58.2 lighthouse@12.8.2
+      - run: /tmp/mimelchlo-audit/node_modules/.bin/playwright install --with-deps chromium
+      - name: Verify interactive workflows
+        run: |
+          mkdir -p evidence
+          python -m http.server --bind 127.0.0.1 --directory public 8765 > /tmp/mimelchlo-http.log 2>&1 &
+          for attempt in $(seq 1 15); do
+            curl -fsS http://127.0.0.1:8765/ -o /dev/null 2>/dev/null && break
+            sleep 1
+          done
+          NODE_PATH=/tmp/mimelchlo-audit/node_modules node tests/public-site.cjs http://127.0.0.1:8765/
+          if [ "$GITHUB_REF" = refs/heads/main ]; then
+            for attempt in $(seq 1 24); do
+              curl -fsS "https://mimelchlo-logistics.pages.dev/?check=$GITHUB_SHA" | cmp -s public/index.html && break
+              sleep 5
+            done
+            curl -fsS "https://mimelchlo-logistics.pages.dev/?check=$GITHUB_SHA" | cmp public/index.html
+            NODE_PATH=/tmp/mimelchlo-audit/node_modules node tests/public-site.cjs https://mimelchlo-logistics.pages.dev/ live-
+          fi
+          target=http://127.0.0.1:8765/
+          if [ "$GITHUB_REF" = refs/heads/main ]; then target=https://mimelchlo-logistics.pages.dev/; fi
+          chromium=$(NODE_PATH=/tmp/mimelchlo-audit/node_modules node -p "require('playwright').chromium.executablePath()")
+          export CHROME_PATH="$chromium"
+          lighthouse=/tmp/mimelchlo-audit/node_modules/.bin/lighthouse
+          "$lighthouse" "$target" --chrome-flags="--headless --no-sandbox" --only-categories=performance,accessibility,best-practices,seo --output=json --output=html --output-path=evidence/lighthouse-mobile --quiet
+          "$lighthouse" "$target" --preset=desktop --chrome-flags="--headless --no-sandbox" --only-categories=performance,accessibility,best-practices,seo --output=json --output=html --output-path=evidence/lighthouse-desktop --quiet
+          node - <<'JS'
+          const fs = require('node:fs');
+          for (const device of ['mobile', 'desktop']) {
+            const report = JSON.parse(fs.readFileSync('evidence/lighthouse-' + device + '.report.json'));
+            console.log(device, Object.fromEntries(Object.entries(report.categories).map(([id, value]) => [id, value.score * 100])));
+            console.log(Object.fromEntries(['largest-contentful-paint','total-blocking-time','cumulative-layout-shift'].map(id => [id, report.audits[id].displayValue])));
+          }
+          JS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: public-site-evidence
+          path: evidence/
