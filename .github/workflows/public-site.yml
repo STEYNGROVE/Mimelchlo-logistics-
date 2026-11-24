@@ -1,10 +1,10 @@
 name: Public site validation
 on:
   pull_request:
-    paths: ['public/**', 'tests/public-site.cjs', '.github/workflows/public-site.yml']
+    paths: ['public/**', 'functions/**', 'tests/public-site.cjs', '.github/workflows/public-site.yml']
   push:
-    branches: [main, 'nexus/premium-logistics']
-    paths: ['public/**', 'tests/public-site.cjs', '.github/workflows/public-site.yml']
+    branches: [main, 'nexus/premium-logistics', 'nexus/commercial-integration']
+    paths: ['public/**', 'functions/**', 'tests/public-site.cjs', '.github/workflows/public-site.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -34,6 +34,7 @@ jobs:
           target=http://127.0.0.1:8765/
           case "$GITHUB_REF" in
             refs/heads/main) target=https://mimelchlo-logistics.pages.dev/ ;;
+            refs/heads/nexus/commercial-integration) target=https://nexus-commercial-integration.mimelchlo-logistics.pages.dev/ ;;
             refs/heads/nexus/premium-logistics) target=https://nexus-premium-logistics.mimelchlo-logistics.pages.dev/ ;;
           esac
           if [[ "$target" == https:* ]]; then

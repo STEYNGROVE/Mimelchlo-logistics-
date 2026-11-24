@@ -11,6 +11,9 @@ async function verify(browser, name, options) {
   const context = await browser.newContext({ ...options, reducedMotion:'reduce' });
   try {
     const page = await context.newPage();
+    if (url.startsWith('http:')) {
+      await page.route('**/api/enquiries', route => route.fulfill({json:{available:false}}));
+    }
     const errors = [];
     const failed = [];
     page.on('pageerror', error => errors.push(error.message));
@@ -55,6 +58,26 @@ async function verify(browser, name, options) {
     await page.getByLabel('Enquiry type').selectOption('Backhaul enquiry');
     await page.getByLabel('Company', {exact:true}).fill('Browser test company');
     await page.getByLabel('Collection and delivery addresses', {exact:false}).fill('Illustrative cargo only');
+    if (url.startsWith('https:')) {
+      const request = context.request;
+      const intake = new URL('api/enquiries',url).href;
+      const relay = await request.get(new URL('api/enquiry-relay',url).href);
+      assert.equal(relay.status(), 401);
+      assert.equal((await request.post(intake,{data:{}})).status(), 403);
+      assert.equal((await request.post(intake,{headers:{Origin:new URL(url).origin},data:{}})).status(), 400);
+      await page.getByRole('button',{name:'Send enquiry'}).waitFor();
+      if (url.includes('nexus-commercial-integration') && name === 'desktop') {
+        await page.getByLabel('Reply email').fill('enquiry-test@example.invalid');
+        await page.getByLabel('I agree that Mimelchlo Logistics', {exact:false}).check();
+        await page.getByRole('button',{name:'Send enquiry'}).click();
+        await page.waitForFunction(() => document.querySelector('#brief-status').textContent.startsWith('Enquiry received.'));
+        const receipt = await page.locator('#brief-status').innerText();
+        await page.getByRole('button',{name:'Send enquiry'}).click();
+        await page.waitForFunction(text => document.querySelector('#brief-status').textContent === text, receipt);
+        await page.getByLabel('Reply email').clear();
+        await page.getByLabel('I agree that Mimelchlo Logistics', {exact:false}).uncheck();
+      }
+    }
     const downloadEvent = page.waitForEvent('download');
     await page.getByRole('button', {name:'Download enquiry draft'}).click();
     const download = await downloadEvent;

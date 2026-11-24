@@ -66,3 +66,7 @@ footer{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;paddin
 @media(max-width:390px){.fields{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important}}
 @media(prefers-reduced-data:reduce){.hero::before{background:linear-gradient(125deg,#16161c,#2c2028)}}
+
+#online-enquiry{margin-bottom:1rem}
+.consent{display:flex;align-items:flex-start;gap:.6rem}
+.consent input{width:1.15rem;min-height:1.15rem;flex:none;margin:.24rem 0 0}

@@ -29,6 +29,7 @@ const form = byId('q');
 const { origin, destination, km } = form.elements;
 const trailer = byId('trailer');
 let lastPlan = '';
+let enquiryPlan = null;
 let configuration = '';
 
 function option(select, value, name) {
@@ -130,6 +131,7 @@ form.addEventListener('input', () => {
   byId('result-card').hidden = true;
   byId('planner-status').textContent = '';
   lastPlan = '';
+  enquiryPlan = null;
 });
 
 form.addEventListener('submit', event => {
@@ -172,6 +174,7 @@ form.addEventListener('submit', event => {
   byId('load-note').textContent = loadNote;
   drawLoad(slots, pallets);
   lastPlan = trip + '\n' + loadNote;
+  enquiryPlan = {from:locationName(origin),to:locationName(destination),cargo:data.get('cargo'),distance,mass,pallets};
   byId('result-card').hidden = false;
   byId('planner-status').textContent = 'Trip estimate calculated. Estimated total ' + rand(total);
 });

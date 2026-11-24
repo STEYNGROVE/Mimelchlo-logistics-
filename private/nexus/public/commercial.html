@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en-ZA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex"><title>NEXUS Commercial</title><link rel="stylesheet" href="/commercial.css"><script src="/commercial.js" defer></script></head>
+<body><main>
+<header><a href="/operations.html">NEXUS operations</a><h1>Commercial command centre</h1><p>Review freight requests and prepare internal quotes.</p></header>
+<nav aria-label="Operations"><a href="/hunter.html">Freight intelligence</a><a href="/fleet.html">Fleet operations</a><a href="/compliance.html">Compliance</a></nav>
+<h2>Enquiry inbox</h2><button type="button" id="sync">Import public enquiries</button><p id="status" role="status"></p>
+<h3>Acquisition by source and status</h3><ul id="report"></ul>
+<label for="leads">Select an enquiry</label><select id="leads"></select>
+<section id="detail" hidden>
+<h3>Enquiry details</h3><pre id="details"></pre>
+<form id="lead">
+<label>Lead status<select name="status"><option value="new">New</option><option value="reviewing">Reviewing</option><option value="qualified">Qualified</option><option value="won">Won</option><option value="lost">Lost</option></select></label>
+<label>Follow-up date<input type="date" name="followUp"></label><button>Save lead</button>
+</form>
+<h3>Internal quote</h3><p>Enter staff-verified figures. Approval is internal. No quotation is sent and no booking is made.</p>
+<form id="quote">
+<div class="inputs">
+<label>Distance in km<input name="km" type="number" min="1" max="100000" required></label>
+<label>Linehaul operating cost per km (R)<input name="perKmCents" type="number" step=".01" min="0" max="100000" required></label>
+<label>Fuel surcharge (R)<input name="fuelCents" type="number" step=".01" min="0" max="10000000" value="0" required></label>
+<label>Tolls (R)<input name="tollCents" type="number" step=".01" min="0" max="10000000" value="0" required></label>
+<label>Handling cost (R)<input name="handlingCents" type="number" step=".01" min="0" max="10000000" value="0" required></label>
+<label>Markup (%)<input name="marginBps" type="number" step=".01" min="0" max="100" value="0" required></label>
+<label>Confirmed payload (kg)<input name="payloadKg" type="number" min="1" max="1000000" required></label>
+<label>Confirmed pallet spaces<input name="palletSlots" type="number" min="0" max="1000" required></label>
+<label>Distance source<select name="distanceSource"><option value="manual">Checked manual distance</option><option value="general-road">General-road route</option><option value="heavy-vehicle-verified">Verified heavy-vehicle route</option></select></label>
+<label>Cargo, vehicle and route verification<textarea name="verification" required maxlength="500"></textarea></label>
+</div><button>Save quote draft</button></form>
+<h3>Quote history</h3><ul id="quotes"></ul>
+</section></main></body></html>

@@ -17,6 +17,7 @@
 <link rel="stylesheet" href="/style.css">
 <script src="/quote.js" defer></script>
 <script src="/experience.js" defer></script>
+<script src="/enquiry.js" defer></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -115,7 +116,13 @@
         <label>Company<input name="company" required maxlength="120" autocomplete="organization"></label>
         <label>Preferred collection date<input name="date" type="date"></label>
         <label>Collection and delivery addresses, cargo dimensions and requirements<textarea name="notes" required maxlength="2000" rows="5"></textarea></label>
-        <p class="quiet">Your draft stays on this device until you share it. Online submission is currently unavailable.</p>
+        <div id="online-enquiry" hidden>
+          <label>Reply email<input name="email" type="email" maxlength="254" autocomplete="email"></label>
+          <label class="sr-only" aria-hidden="true">Leave blank<input name="website" tabindex="-1" autocomplete="off"></label>
+          <label class="consent"><input name="consent" type="checkbox"> I agree that Mimelchlo Logistics may use these details to respond to this enquiry.</label>
+          <button type="button" id="send-enquiry">Send enquiry</button>
+        </div>
+        <p class="quiet">Avoid entering payment information, identification numbers or confidential documents. You can download a copy without submitting.</p>
         <div class="actions"><button type="submit" disabled>Download enquiry draft</button><button type="button" class="secondary" id="voice" hidden>Dictate requirements</button></div>
         <p role="status" id="brief-status"></p>
       </form>
