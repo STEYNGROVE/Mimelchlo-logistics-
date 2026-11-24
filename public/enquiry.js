@@ -30,12 +30,12 @@ enquiryButton.addEventListener('click', async () => {
   const consent = fields.consent;
   if (!brief.reportValidity()) return;
   if (!email.value.trim()) {
-    enquiryStatus.textContent = 'Add a reply email to send this enquiry.';
+    enquiryStatus.textContent = tr('Add a reply email to send this enquiry.');
     email.focus();
     return;
   }
   if (!consent.checked) {
-    enquiryStatus.textContent = 'Confirm how your details may be used before sending.';
+    enquiryStatus.textContent = tr('Confirm how your details may be used before sending.');
     consent.focus();
     return;
   }
@@ -47,21 +47,21 @@ enquiryButton.addEventListener('click', async () => {
   const fingerprint = JSON.stringify(body);
   if (preparedSubmission?.fingerprint !== fingerprint) preparedSubmission = {fingerprint,requestId:crypto.randomUUID()};
   enquiryButton.disabled = true;
-  enquiryStatus.textContent = 'Sending enquiry…';
+  enquiryStatus.textContent = tr('Sending enquiry…');
   try {
     const response = await fetch('/api/enquiries', {
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({...body, requestId:preparedSubmission.requestId}),signal:AbortSignal.timeout(12000)
     });
     if (response.status === 429) {
-      enquiryStatus.textContent = 'The enquiry limit has been reached. Please try later or download your draft.';
+      enquiryStatus.textContent = tr('The enquiry limit has been reached. Please try later or download your draft.');
       return;
     }
     if (!response.ok) throw new Error('submission');
     const {reference} = await response.json();
-    enquiryStatus.textContent = 'Enquiry received. Your reference is ' + reference + '.';
+    enquiryStatus.textContent = tr('Enquiry received. Your reference is {0}.', reference);
   } catch {
-    enquiryStatus.textContent = 'Submission could not be confirmed. Retry with the same details or download your draft.';
+    enquiryStatus.textContent = tr('Submission could not be confirmed. Retry with the same details or download your draft.');
   } finally {
     enquiryButton.disabled = false;
   }

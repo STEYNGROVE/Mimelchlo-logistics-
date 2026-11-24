@@ -93,8 +93,17 @@ async function verify(browser, name, options) {
     await lowData.click();
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.screenshot({path:'evidence/' + prefix + name + '.png', fullPage:true});
-    await page.getByRole('link', {name:'Afrikaans planning guide'}).click();
+    await page.getByRole('link', {name:'Afrikaans'}).click();
     assert.equal(await page.locator('html').getAttribute('lang'), 'af-ZA');
+    assert.match(await page.locator('h1').innerText(), /SLIM VERVOER/);
+    await page.getByLabel('Vragsoort').selectOption('temperature');
+    assert.match(await page.locator('#guidance').innerText(), /Lys bruto massa/);
+    assert.match(await page.locator('#trailer-name').innerText(), /Gordynsleepwa/);
+    assert.equal(await page.locator('#brief [name=kind]').inputValue(), 'Spot quotation');
+    await page.getByLabel('Padroeteafstand (km)').fill('248');
+    await page.getByLabel('Bruto vragmassa (kg)').fill('20000');
+    await page.getByRole('button', {name:'Bereken raming'}).click();
+    assert.match(await page.locator('#result').innerText(), /Beraamde totaal/);
     await page.goto(url);
     await page.evaluate(() => navigator.serviceWorker.ready);
     await page.reload();

@@ -3,28 +3,162 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Mimelchlo Logistics | Afrikaanse vragbeplanningsgids</title>
-<meta name="description" content="Berei jou padvragnavraag voor met Mimelchlo Logistics se Afrikaanse vragbeplanningsgids.">
+<title>Mimelchlo Logistics | Suid-Afrikaanse vragbeplanning</title>
+<meta name="description" content="Beplan padvrag met Mimelchlo Logistics in Bethlehem, Vrystaat. Vergelyk sleepwaens, beraam vervoerkoste en berei ’n vragnavraag voor.">
+<link rel="alternate" hreflang="en-ZA" href="https://mimelchlo-logistics.pages.dev/">
+<link rel="alternate" hreflang="af-ZA" href="https://mimelchlo-logistics.pages.dev/af/">
 <link rel="canonical" href="https://mimelchlo-logistics.pages.dev/af/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Mimelchlo Logistics | Slim vervoer. Kragtige aflewering.">
+<meta property="og:description" content="Beplan jou volgende padvragrit in Suid-Afrika.">
+<meta property="og:url" content="https://mimelchlo-logistics.pages.dev/af/">
+<meta property="og:image" content="https://mimelchlo-logistics.pages.dev/freight.webp">
+<meta name="theme-color" content="#121214">
+<link rel="icon" href="/brand.webp">
+<link rel="manifest" href="/manifest.webmanifest">
 <link rel="stylesheet" href="/style.css">
+<script src="/af/locale.js" defer></script>
+<script src="/quote.js" defer></script>
+<script src="/experience.js" defer></script>
+<script src="/enquiry.js" defer></script>
 </head>
 <body>
-<header class="top"><a class="brand" href="/"><img src="/brand.webp" width="52" height="52" alt="">MIMELCHLO LOGISTICS</a><a href="/" lang="en-ZA">English</a></header>
-<main class="section">
-<p class="eyebrow">Bethlehem, Vrystaat · Suid-Afrika</p>
-<h1>Beplan jou padvrag.</h1>
-<p>Gedryf deur toewyding. Gebou om te lewer.</p>
-<div class="panel">
-<h2>Berei jou vragnavraag voor.</h2>
-<ul>
-<li>Verskaf die afhaal- en afleweringsadresse en die verlangde datums.</li>
-<li>Beskryf die vrag, afmetings, bruto gewig en aantal palette.</li>
-<li>Meld temperatuurbeheer, spesiale vereistes en beskikbare laaitoerusting.</li>
-<li>Bevestig roetebeperkings, tariewe en toerusting voordat jy bespreek.</li>
-</ul>
-<a href="/#quote">Maak die Engelse vragbeplanner oop</a>
-</div>
+<a class="skip" href="#main">Spring na inhoud</a>
+<header class="top">
+  <a class="brand" href="/af/" aria-label="Mimelchlo Logistics se tuisblad"><img src="/brand.webp" width="52" height="52" alt=""><strong>MIMELCHLO <span>LOGISTICS</span></strong></a>
+  <nav aria-label="Hoofnavigasie"><a href="#quote">Vragbeplanner</a><a href="#equipment">Toerusting</a><a href="#customer">Kliëntedienste</a></nav>
+  <button class="secondary" type="button" id="bandwidth" hidden aria-pressed="false">Lae dataverbruik</button>
+</header>
+<main id="main">
+  <section class="hero" aria-labelledby="headline">
+    <div class="hero-inner">
+      <img class="hero-logo" src="/brand.webp" width="104" height="104" alt="Amptelike Mimelchlo Logistics-logo">
+      <p class="eyebrow">Bethlehem, Vrystaat · Suid-Afrika</p>
+      <h1 id="headline">SLIM VERVOER.<br><em>KRAGTIGE AFLEWERING.</em></h1>
+      <p class="tagline">Gedryf deur toewyding. Gebou om te lewer.</p>
+      <div class="actions"><a class="button" href="#quote">Beplan my vrag <span aria-hidden="true">↗</span></a><a class="button secondary" href="#tracking">Volg versending</a><a class="button secondary" href="#portal">Kliënteportaal</a></div>
+    </div>
+    <p class="credit">Illustratiewe vervoerbeeld</p>
+  </section>
+
+  <section class="section" id="quote">
+    <p class="eyebrow">Padvragbeplanning</p>
+    <h2>Beplan jou vragrit.</h2>
+    <p>Kies afhaal- en afleweringspunte, stel die vrag saam en beraam die ritkoste in rand.</p>
+    <noscript><p>Aktiveer JavaScript vir roetekeuse, vragbeplanning en berekeninge.</p></noscript>
+    <div class="split">
+      <form id="q" method="post" class="panel" aria-label="Vragkosteraming">
+        <div class="fields">
+          <label>Afhaalstad <select name="origin" required></select></label>
+          <label>Afleweringstad <select name="destination" required></select></label>
+          <label id="custom-origin" hidden>Ander afhaaldorp<input name="originTown" maxlength="100"></label>
+          <label id="custom-destination" hidden>Ander afleweringsdorp<input name="destinationTown" maxlength="100"></label>
+          <label>Padroeteafstand (km)<input name="km" type="number" min="1" max="100000" step=".01" required placeholder="Voer ’n padroeteafstand in"></label>
+          <label>Vragsoort<select name="cargo"><option value="general">Algemene vrag</option><option value="temperature">Temperatuurbeheerd</option><option value="open">Oorgroot of met ’n hyskraan gelaai</option><option value="container">ISO-houer</option><option value="bulk">Los droë grootmaatvrag</option><option value="special">Gevaarlik of gespesialiseerd</option></select></label>
+          <label>Bruto vragmassa (kg)<input name="mass" type="number" min="1" max="1000000" step="1" required></label>
+          <label>Standaardpalette (1 200 × 1 000 mm)<input name="pallets" type="number" min="0" max="1000" step="1" value="0" required></label>
+        </div>
+        <details open><summary>Koste-aannames</summary>
+          <p class="quiet">Voorbeeldwaardes. Voer jou eie tariewe in.</p>
+          <div class="fields">
+            <label>Tarief per km (R)<input name="rate" type="number" min="0" max="100000" step=".01" value="45" required></label>
+            <label>Dieseltoeslag (R)<input name="diesel" type="number" min="0" max="10000000" step=".01" value="1840" required></label>
+            <label>Tolgeld (R)<input name="tolls" type="number" min="0" max="10000000" step=".01" value="685" required></label>
+          </div>
+        </details>
+        <button type="submit" disabled>Bereken raming</button>
+        <p class="quiet">Slegs ter illustrasie. Bevestig roeteafstand, tolgeld, werklike tariewe en BTW voor versending.</p>
+      </form>
+      <div>
+        <div class="panel map-panel">
+          <h3>Suid-Afrikaanse roeteskets</h3>
+          <p class="quiet">Die skets toon die gelyste stede. Lyne dui slegs rigting aan.</p>
+          <svg id="map" viewBox="0 0 480 365" role="img" aria-labelledby="map-title">
+            <title id="map-title">Skematiese kaart van Suid-Afrika met gekose eindpunte</title>
+            <path class="land" d="M57 153 91 178 130 157 141 109 173 125 206 103 236 105 247 71 278 60 310 27 365 37 391 75 415 103 388 140 414 154 420 180 406 217 373 263 332 283 286 312 232 328 153 343 100 337 75 296 57 242 39 194Z"/>
+            <path class="border" d="M313 219 329 205 344 215 336 237 317 246 302 232Z"/>
+            <line id="route" class="route"/>
+            <g id="markers"></g>
+          </svg>
+          <a id="directions" href="https://www.google.com/maps/dir/" target="_blank" rel="noopener noreferrer">Kontroleer padroeteafstand in Google Maps ↗</a>
+          <p class="quiet">Bevestig vragmotorbeperkings, laaitye en bestuurderskedules apart.</p>
+        </div>
+        <div id="result-card" class="panel result" hidden>
+          <h3>Ritraming</h3><output id="result" for="q"></output>
+          <h4>Paletuitleg</h4><p id="load-note" class="quiet"></p><div id="load" aria-hidden="true"></div>
+        </div>
+        <p id="planner-status" class="sr-only" role="status"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="equipment" class="section showroom">
+    <p class="eyebrow">Voertuig- en sleepwagids</p>
+    <h2>Pas die voertuig by die vrag.</h2>
+    <p>Verteenwoordigende konfigurasies. Afmetings en loonvragte is illustratiewe beplanningsaannames. Bevestig toerusting, aslimiete en laaivereistes met die versendingspan.</p>
+    <div class="split">
+      <div class="panel">
+        <label>Sleepwakonfigurasie<select id="trailer"></select></label>
+        <svg class="truck" viewBox="0 0 390 106" aria-hidden="true">
+          <path d="M3 81V43l24-29h57v67zm11-38h49V24H32z" fill="currentColor" fill-rule="evenodd"/>
+          <path d="M90 77h294v10H90z" fill="#a71b32"/>
+          <g id="trailer-body"></g>
+          <g fill="#48484e" stroke="#bfc1ca" stroke-width="3"><circle cx="31" cy="87" r="13"/><circle cx="99" cy="87" r="13"/><circle cx="126" cy="87" r="13"/><circle cx="333" cy="87" r="13"/><circle cx="360" cy="87" r="13"/></g>
+        </svg>
+      </div>
+      <div class="panel"><h3 id="trailer-name">Geskiktheid van toerusting</h3><p id="trailer-purpose"></p><dl id="specs"></dl><a href="#enquiry" id="trailer-enquiry">Berei ’n navraag vir dié konfigurasie voor ↗</a></div>
+    </div>
+  </section>
+
+  <section id="enquiry" class="section">
+    <p class="eyebrow">Kommersiële vrag</p>
+    <h2>Berei jou vragnavraag voor.</h2>
+    <div class="split">
+      <form id="brief" method="post" class="panel" aria-label="Konsepvragnavraag">
+        <label>Soort navraag<select name="kind"><option value="Spot quotation">Eenmalige kwotasie</option><option value="Repeat transport">Herhaalvervoer</option><option value="Backhaul enquiry">Terugvragnavraag</option><option value="Commercial contract">Kommersiële kontrak</option></select></label>
+        <label>Maatskappy<input name="company" required maxlength="120" autocomplete="organization"></label>
+        <label>Voorkeur-afhaaldatum<input name="date" type="date"></label>
+        <label>Afhaal- en afleweringsadresse, vragafmetings en vereistes<textarea name="notes" required maxlength="2000" rows="5"></textarea></label>
+        <div id="online-enquiry" hidden>
+          <label>Antwoord-e-posadres<input name="email" type="email" maxlength="254" autocomplete="email"></label>
+          <label class="sr-only" aria-hidden="true">Los leeg<input name="website" tabindex="-1" autocomplete="off"></label>
+          <label class="consent"><input name="consent" type="checkbox"> Ek stem in dat Mimelchlo Logistics hierdie besonderhede mag gebruik om op dié navraag te antwoord.</label>
+          <button type="button" id="send-enquiry">Stuur navraag</button>
+        </div>
+        <p class="quiet">Moenie betaalinligting, identiteitsnommers of vertroulike dokumente invoer nie. Jy kan ’n kopie aflaai sonder om dit in te dien.</p>
+        <div class="actions"><button type="submit" disabled>Laai konsepnavraag af</button><button type="button" class="secondary" id="voice" hidden>Dikteer vereistes</button></div>
+        <p role="status" id="brief-status"></p>
+      </form>
+      <div class="panel">
+        <h3>Logistieke assistent</h3>
+        <p>Gebruik die beplanningsgids vir vragvrae.</p>
+        <label for="topic">Waarmee het jy hulp nodig?</label>
+        <select id="topic">
+          <option value="cargo">Vrag en toerusting</option><option value="cost">Vervoerkoste</option><option value="docs">Vervoerdokumente</option><option value="quotes">Kwotasievereistes</option><option value="customer">Kliëntedienste</option>
+        </select>
+        <p id="guidance" aria-live="polite"></p>
+        <div class="actions"><a href="#quote">Maak vragbeplanner oop</a><a href="#equipment">Vergelyk sleepwaens</a></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="customer">
+    <p class="eyebrow">Kliëntedienste</p>
+    <h2>Versendingstoegang.</h2>
+    <div class="split">
+      <div class="panel" id="tracking"><h3>Volg jou versending</h3><p>Aanlyn nasporing is tans nie beskikbaar nie. Kontak die versendingspan op jou besprekingsbevestiging en hou jou versendingsverwysing byderhand.</p></div>
+      <div class="panel" id="portal"><h3>Kliënteportaal</h3><p>Aanlyn registrasie en dokumenttoegang is tans nie beskikbaar nie. Bestaande kliënte kan dokumente by die kontak op hul besprekingsbevestiging aanvra.</p></div>
+    </div>
+  </section>
+  <section class="section" id="contact" itemscope itemtype="https://schema.org/Organization">
+    <meta itemprop="url" content="https://mimelchlo-logistics.pages.dev/">
+    <meta itemprop="logo" content="https://mimelchlo-logistics.pages.dev/logo.png">
+    <h2 itemprop="name">Mimelchlo Logistics (Pty) Ltd</h2>
+    <p>Registrasie 2015/210713/07 · Gestig op 25 Junie 2015</p>
+    <p>B-BBEE-vlak 4 · 100% verkrygingserkenning · Verskafde sertifikaat geldig tot 28 Mei 2027.</p>
+    <p itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">Geregistreerde adres · <span itemprop="streetAddress">39 Reinecke Street</span>, <span itemprop="addressLocality">Bethlehem</span>, <span itemprop="addressRegion">Vrystaat</span>, <span itemprop="postalCode">9701</span>, <span itemprop="addressCountry">Suid-Afrika</span></p>
+  </section>
 </main>
-<footer>Powered by PRIME8PIXELS</footer>
+<footer><span>Mimelchlo Logistics</span><a href="/" lang="en-ZA">English</a><span>Powered by PRIME8PIXELS</span></footer>
 </body>
 </html>

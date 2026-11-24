@@ -1,5 +1,11 @@
 'use strict';
 
+const locale = document.documentElement.lang;
+function tr(message, ...values) {
+  const format = window.translations?.[message] ?? message;
+  return values.length ? format.replace(/\{(\d+)\}/g, (_, key) => values[Number(key)]) : format;
+}
+
 const cities = {
   Bethlehem: [326, 184], Bloemfontein: [280, 215], 'Cape Town': [101, 320],
   Durban: [384, 219], 'East London': [317, 279], Gqeberha: [265, 303],
@@ -33,7 +39,7 @@ let enquiryPlan = null;
 let configuration = '';
 
 function option(select, value, name) {
-  select.add(new Option(name, value));
+  select.add(new Option(tr(name), value));
 }
 for (const name of Object.keys(cities)) {
   option(origin, name, name);
@@ -63,7 +69,7 @@ function updateRoute() {
     byId('custom-' + select.name).hidden = !custom;
     field.disabled = !custom;
     field.required = custom;
-    field.setCustomValidity(custom && field.value && !field.value.trim() ? 'Enter a town name.' : '');
+    field.setCustomValidity(custom && field.value && !field.value.trim() ? tr('Enter a town name.') : '');
   }
   const start = locationName(origin);
   const finish = locationName(destination);
@@ -83,7 +89,7 @@ function updateRoute() {
   const params = new URLSearchParams({api:'1', origin:start + ', South Africa', destination:finish + ', South Africa', travelmode:'driving'});
   byId('directions').href = 'https://www.google.com/maps/dir/?' + params;
   byId('directions').hidden = !start || !finish;
-  destination.setCustomValidity(start && start.toLowerCase() === finish.toLowerCase() ? 'Choose a different delivery town.' : '');
+  destination.setCustomValidity(start && start.toLowerCase() === finish.toLowerCase() ? tr('Choose a different delivery town.') : '');
 }
 
 function resetDistance() {
@@ -144,31 +150,33 @@ form.addEventListener('submit', event => {
   const mass = Number(data.get('mass'));
   const pallets = Number(data.get('pallets'));
   const { base, subtotal, vat, total } = calculate(distance, rate, fuel, tolls);
-  const rand = cents => new Intl.NumberFormat('en-ZA', {style:'currency', currency:'ZAR'}).format(cents / 100);
+  const rand = cents => new Intl.NumberFormat(locale, {style:'currency', currency:'ZAR'}).format(cents / 100);
   const key = recommend(data.get('cargo'), mass, pallets);
-  let loadNote = 'Specialist review required. Confirm vehicle, payload and loading before dispatch.';
+  let loadNote = tr('Specialist review required. Confirm vehicle, payload and loading before dispatch.');
   let slots = [];
   if (key) {
     const [name,, decks,, payload] = equipment[key];
-    loadNote = name + ' for review. Confirm compatibility with dispatch.';
+    loadNote = tr('{0} for review. Confirm compatibility with dispatch.', tr(name));
     slots = palletSlots(decks);
     if (payload !== null) {
       const maxPallets = slots.reduce((sum, count) => sum + count, 0);
       const margin = payload - mass;
-      const limits = margin < 0 || pallets > maxPallets ? 'Example limits exceeded. Ask dispatch about an alternative.' : 'Check axle limits and securing with dispatch.';
-      loadNote = `${name} for review · ${mass.toLocaleString()} kg loaded · ${Math.abs(margin).toLocaleString()} kg ${margin < 0 ? 'over' : 'under'} the example payload · ${Math.min(pallets, maxPallets)}/${maxPallets} spaces occupied · ${limits}`;
+      const limits = margin < 0 || pallets > maxPallets ? tr('Example limits exceeded. Ask dispatch about an alternative.') : tr('Check axle limits and securing with dispatch.');
+      loadNote = tr('{0} for review · {1} kg loaded · {2} kg {3} the example payload · {4}/{5} spaces occupied · {6}',
+        tr(name), mass.toLocaleString(locale), Math.abs(margin).toLocaleString(locale), tr(margin < 0 ? 'over' : 'under'),
+        Math.min(pallets, maxPallets), maxPallets, limits);
     }
   }
   const trip = [
-    `${locationName(origin)} → ${locationName(destination)} · ${distance} km entered`,
-    `Linehaul ${rand(base)}`,
-    `Diesel surcharge ${rand(Math.round(fuel * 100))}`,
-    `Tolls ${rand(Math.round(tolls * 100))}`,
-    `Subtotal ${rand(subtotal)}`,
-    `Illustrative VAT (15%) ${rand(vat)}`,
-    `Estimated total ${rand(total)}`,
-    `Drive time at 65 km/h · ${(distance / 65).toFixed(1)} hours, before breaks and loading`,
-    `Illustrative tailpipe emissions · ${Math.round(distance * .35 * 2.68)} kg CO₂ at 35 L/100 km and 2.68 kg CO₂/L`
+    tr('{0} → {1} · {2} km entered', locationName(origin), locationName(destination), distance),
+    tr('Linehaul {0}', rand(base)),
+    tr('Diesel surcharge {0}', rand(Math.round(fuel * 100))),
+    tr('Tolls {0}', rand(Math.round(tolls * 100))),
+    tr('Subtotal {0}', rand(subtotal)),
+    tr('Illustrative VAT (15%) {0}', rand(vat)),
+    tr('Estimated total {0}', rand(total)),
+    tr('Drive time at 65 km/h · {0} hours, before breaks and loading', (distance / 65).toFixed(1)),
+    tr('Illustrative tailpipe emissions · {0} kg CO₂ at 35 L/100 km and 2.68 kg CO₂/L', Math.round(distance * .35 * 2.68))
   ].join('\n');
   byId('result').textContent = trip;
   byId('load-note').textContent = loadNote;
@@ -176,26 +184,26 @@ form.addEventListener('submit', event => {
   lastPlan = trip + '\n' + loadNote;
   enquiryPlan = {from:locationName(origin),to:locationName(destination),cargo:data.get('cargo'),distance,mass,pallets};
   byId('result-card').hidden = false;
-  byId('planner-status').textContent = 'Trip estimate calculated. Estimated total ' + rand(total);
+  byId('planner-status').textContent = tr('Trip estimate calculated. Estimated total {0}', rand(total));
 });
 
 function updateTrailer() {
   const [name, purpose, decks, width, mass, path] = equipment[trailer.value];
-  byId('trailer-name').textContent = name;
-  byId('trailer-purpose').textContent = purpose;
+  byId('trailer-name').textContent = tr(name);
+  byId('trailer-purpose').textContent = tr(purpose);
   byId('trailer-body').replaceChildren(svg('path', {d:path, fill:'#858793', stroke:'#e0dfe6', 'stroke-width':2}));
   const specs = byId('specs');
   specs.replaceChildren();
   const values = mass === null ? {'Equipment limits':'Confirm with dispatch'} : {
     'Example deck dimensions': decks.map(length => length + ' m × ' + width + ' m').join(' + '),
-    'Example payload': mass.toLocaleString('en-ZA') + ' kg',
+    'Example payload': mass.toLocaleString(locale) + ' kg',
     'Example pallet spaces': palletSlots(decks).join(' + ')
   };
   for (const [label, value] of Object.entries(values)) {
     const term = document.createElement('dt');
     const description = document.createElement('dd');
-    term.textContent = label;
-    description.textContent = value;
+    term.textContent = tr(label);
+    description.textContent = tr(value);
     specs.append(term, description);
   }
 }
@@ -204,7 +212,7 @@ updateTrailer();
 
 byId('trailer-enquiry').addEventListener('click', () => {
   configuration = equipment[trailer.value][0];
-  byId('brief-status').textContent = 'Added ' + configuration + ' to this enquiry draft.';
+  byId('brief-status').textContent = tr('Added {0} to this enquiry draft.', tr(configuration));
 });
 
 const brief = byId('brief');
@@ -212,16 +220,16 @@ brief.addEventListener('submit', event => {
   event.preventDefault();
   const data = new FormData(brief);
   const lines = [
-    'Mimelchlo Logistics freight enquiry draft',
-    data.get('kind'),
-    'Company · ' + data.get('company'),
-    'Preferred collection · ' + (data.get('date') || 'To be arranged'),
-    ...(configuration ? ['Requested configuration · ' + configuration] : []),
+    tr('Mimelchlo Logistics freight enquiry draft'),
+    tr(data.get('kind')),
+    tr('Company · {0}', data.get('company')),
+    tr('Preferred collection · {0}', data.get('date') || tr('To be arranged')),
+    ...(configuration ? [tr('Requested configuration · {0}', tr(configuration))] : []),
     '',
     data.get('notes'),
-    ...(lastPlan ? ['', 'Illustrative planning assumptions', lastPlan] : []),
+    ...(lastPlan ? ['', tr('Illustrative planning assumptions'), lastPlan] : []),
     '',
-    'Draft only. Please confirm requirements, availability and pricing with dispatch.'
+    tr('Draft only. Please confirm requirements, availability and pricing with dispatch.')
   ];
   const href = URL.createObjectURL(new Blob([lines.join('\n')], {type:'text/plain;charset=utf-8'}));
   const link = document.createElement('a');
@@ -229,39 +237,39 @@ brief.addEventListener('submit', event => {
   link.download = 'mimelchlo-freight-enquiry.txt';
   link.click();
   setTimeout(() => URL.revokeObjectURL(href), 30000);
-  byId('brief-status').textContent = 'Enquiry draft downloaded.';
+  byId('brief-status').textContent = tr('Enquiry draft downloaded.');
 });
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 if (SpeechRecognition && window.isSecureContext) {
   const voice = byId('voice');
   const recognition = new SpeechRecognition();
-  recognition.lang = 'en-ZA';
+  recognition.lang = locale;
   voice.hidden = false;
   voice.addEventListener('click', () => {
     voice.disabled = true;
-    byId('brief-status').textContent = 'Listening. Your browser may process audio through its speech service.';
+    byId('brief-status').textContent = tr('Listening. Your browser may process audio through its speech service.');
     try {
       recognition.start();
     } catch {
       voice.disabled = false;
-      byId('brief-status').textContent = 'Dictation is unavailable. You can type your requirements.';
+      byId('brief-status').textContent = tr('Dictation is unavailable. You can type your requirements.');
     }
   });
   recognition.addEventListener('result', event => {
     const notes = brief.elements.notes;
     notes.value = [notes.value, event.results[0][0].transcript].filter(Boolean).join(' ').slice(0, notes.maxLength);
-    byId('brief-status').textContent = 'Review the dictated text before downloading.';
+    byId('brief-status').textContent = tr('Review the dictated text before downloading.');
   });
   recognition.addEventListener('error', () => {
-    byId('brief-status').textContent = 'Dictation is unavailable. You can type your requirements.';
+    byId('brief-status').textContent = tr('Dictation is unavailable. You can type your requirements.');
   });
   recognition.addEventListener('end', () => { voice.disabled = false; });
 }
 
 const topic = byId('topic');
 function updateGuidance() {
-  byId('guidance').textContent = guidance[topic.value];
+  byId('guidance').textContent = tr(guidance[topic.value]);
 }
 topic.addEventListener('change', updateGuidance);
 updateGuidance();
