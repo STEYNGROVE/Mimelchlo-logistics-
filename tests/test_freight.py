@@ -1,0 +1,90 @@
+from datetime import date
+from decimal import Decimal
+from pathlib import Path
+import sqlite3
+from tempfile import TemporaryDirectory
+import unittest
+
+from freight.backup import backup
+from freight.discovery import migrate, run
+from freight.etenders import normalize, page_url, read_page
+from freight.profit import OperatingCosts, estimate
+
+START = date(2026, 11, 20)
+END = date(2026, 11, 22)
+RELEASE = {
+    "ocid": "ocds-9t57fa-test", "id": "1", "date": "2026-11-22T00:00:00Z",
+    "tag": ["compiled"], "tender": {
+        "title": "Coal haulage", "tenderPeriod": {"endDate": "2020-01-01T00:00:00Z"},
+        "value": {"amount": 10000, "currency": "ZAR"},
+    },
+}
+
+
+class FreightTests(unittest.TestCase):
+    def setUp(self):
+        self.db = sqlite3.connect(":memory:")
+        self.addCleanup(self.db.close)
+        migrate(self.db)
+
+    def test_schema_and_pagination(self):
+        package = {"releases": [RELEASE], "links": {"next": page_url(START, END, 2)}}
+        self.assertTrue(read_page(START, END, 1, lambda _: package)[1])
+        package["links"]["next"] = "https://example.org/"
+        with self.assertRaises(ValueError):
+            read_page(START, END, 1, lambda _: package)
+        with self.assertRaises(ValueError):
+            read_page(START, END, 1, lambda _: {"releases": "invalid"})
+
+    def test_resume_dedup_expiry_and_rejected_records(self):
+        def reader(start, end, page):
+            return [RELEASE, None], page == 1, page_url(start, end, page)
+        self.assertEqual(run(self.db, START, END, 1, reader)["outcome"], "pending")
+        self.assertEqual(run(self.db, START, END, 1, reader)["rejected"], 1)
+        self.assertEqual(run(self.db, START, END, 1, reader)["pages"], 0)
+        self.assertEqual(self.db.execute(
+            "SELECT tender_state, status FROM freight_review_queue"
+        ).fetchall(), [("expired", "UNVERIFIED")])
+
+    def test_outage_keeps_checkpoint(self):
+        def outage(*_):
+            raise TimeoutError
+        with self.assertRaises(TimeoutError):
+            run(self.db, START, END, 1, outage)
+        self.assertEqual(self.db.execute("SELECT count(*) FROM freight_checkpoints").fetchone()[0], 0)
+        self.assertEqual(self.db.execute("SELECT error FROM freight_runs").fetchone()[0], "TimeoutError")
+
+    def test_missing_fields_remain_unknown(self):
+        item = normalize(RELEASE, page_url(START, END, 1))
+        self.assertIsNone(item["province"])
+        self.assertNotIn("rate_zar", item)
+        unrelated = {**RELEASE, "tender": {"title": "Student transportation"}}
+        self.assertIsNone(normalize(unrelated, item["source_url"]))
+
+    def test_backup_restores_database(self):
+        with TemporaryDirectory() as directory:
+            source = Path(directory) / "db"
+            target = Path(directory) / "backup"
+            with sqlite3.connect(source) as db:
+                migrate(db)
+                run(db, START, END, 1, lambda *_: ([RELEASE], False, page_url(START, END, 1)))
+            backup(source, target)
+            with sqlite3.connect(target) as restored:
+                self.assertEqual(restored.execute("SELECT count(*) FROM opportunities").fetchone()[0], 1)
+            with self.assertRaises(FileExistsError):
+                backup(source, target)
+
+    def test_profit_and_unknown_revenue(self):
+        inputs = dict(loaded_km=300, empty_km=200, km_per_litre=2.5, diesel_price=22,
+                      costs=OperatingCosts(600, 1000, 0, 1000, 0, 600, 0, 0, 0, 400))
+        self.assertIsNone(estimate(**inputs)["estimated_contribution_zar"])
+        result = estimate(**inputs, revenue_excl_vat=15000, vat_rate=".15", target_margin=".2")
+        self.assertEqual(result["estimated_contribution_zar"], Decimal("8000"))
+        self.assertEqual(result["estimated_profit_before_tax_zar"], Decimal("7000"))
+        self.assertEqual(result["minimum_quote_incl_vat_zar"], Decimal("11500"))
+        with self.assertRaises(ValueError):
+            estimate(**{**inputs, "diesel_price": "NaN"})
+
+
+if __name__ == "__main__":
+    unittest.main()
