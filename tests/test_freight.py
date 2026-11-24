@@ -1,4 +1,5 @@
-from datetime import date
+from dataclasses import replace
+from datetime import date, datetime, timezone
 from decimal import Decimal
 from pathlib import Path
 import sqlite3
@@ -6,6 +7,7 @@ from tempfile import TemporaryDirectory
 import unittest
 
 from freight.backup import backup
+from freight.backhaul import ReturnLoad, ReturnTrip, rank
 from freight.discovery import migrate, run, run_incremental
 from freight.etenders import normalize, page_url, read_page
 from freight.profit import OperatingCosts, estimate
@@ -93,6 +95,16 @@ class FreightTests(unittest.TestCase):
                 self.assertEqual(restored.execute("SELECT count(*) FROM opportunities").fetchone()[0], 1)
             with self.assertRaises(FileExistsError):
                 backup(source, target)
+
+    def test_backhaul_requires_verified_compatible_profitable_load(self):
+        start = datetime(2026, 11, 20, 8, tzinfo=timezone.utc)
+        end = start.replace(hour=18)
+        trip = ReturnTrip(start, end, "reefer", 20000, 200, 10)
+        load = ReturnLoad("actual", True, start, end, "reefer", 15000, 25, 200, 5000, 1000)
+        candidates = [load, replace(load, reference="unverified", verified_available=False),
+                      replace(load, reference="overweight", weight_kg=22000),
+                      replace(load, reference="loss", revenue_excl_vat=100)]
+        self.assertEqual(rank(trip, candidates), [("actual", Decimal("3750.00"))])
 
     def test_profit_and_unknown_revenue(self):
         inputs = dict(loaded_km=300, empty_km=200, km_per_litre=2.5, diesel_price=22,
