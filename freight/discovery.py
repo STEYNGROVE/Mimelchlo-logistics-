@@ -33,6 +33,14 @@ def migrate(db):
             page INTEGER NOT NULL, done INTEGER NOT NULL,
             PRIMARY KEY(source, starts, ends)
         );
+        CREATE TABLE IF NOT EXISTS freight_reviews (
+            id INTEGER PRIMARY KEY, opportunity_id INTEGER NOT NULL REFERENCES opportunities(id),
+            previous_status TEXT NOT NULL, decision TEXT NOT NULL,
+            reason TEXT NOT NULL, reviewed_at TEXT NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS freight_incremental (
+            source TEXT PRIMARY KEY, starts TEXT NOT NULL
+        );
         CREATE TABLE IF NOT EXISTS freight_runs (
             id INTEGER PRIMARY KEY, source TEXT NOT NULL,
             starts TEXT NOT NULL, ends TEXT NOT NULL, started_at TEXT NOT NULL,
@@ -120,13 +128,33 @@ def run(db, start, end, max_pages, reader=read_page, pause=time.sleep):
     return {"outcome": outcome, "pages": pages, "rejected": rejected}
 
 
+def run_incremental(db, seed, max_pages, today=None, reader=read_page, pause=time.sleep):
+    today = today or datetime.now(timezone.utc).date()
+    row = db.execute("SELECT starts FROM freight_incremental WHERE source=?", (SOURCE,)).fetchone()
+    start = date.fromisoformat(row[0]) if row else seed
+    end = start + timedelta(days=1)
+    if end >= today:
+        return {"outcome": "caught_up", "pages": 0, "rejected": 0}
+    with db:
+        db.execute("INSERT OR IGNORE INTO freight_incremental VALUES (?, ?)", (SOURCE, start.isoformat()))
+    result = run(db, start, end, max_pages, reader, pause)
+    if result["outcome"] == "complete":
+        with db:
+            db.execute("UPDATE freight_incremental SET starts=? WHERE source=?", (end.isoformat(), SOURCE))
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--db", required=True, type=Path)
-    parser.add_argument("--start", required=True, type=date.fromisoformat)
-    parser.add_argument("--end", required=True, type=date.fromisoformat)
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--start", type=date.fromisoformat)
+    mode.add_argument("--incremental-from", type=date.fromisoformat)
+    parser.add_argument("--end", type=date.fromisoformat)
     parser.add_argument("--max-pages", type=int, default=10)
     args = parser.parse_args()
+    if (args.start is None) != (args.end is None):
+        parser.error("--start and --end must be used together")
     database = args.db.resolve(strict=True)
     with database.with_suffix(database.suffix + ".lock").open("a") as lock:
         try:
@@ -139,7 +167,11 @@ def main():
             with db:
                 db.execute("""UPDATE freight_runs SET finished_at=?,outcome='interrupted'
                               WHERE outcome='running'""", (utc_now(),))
-            print(json.dumps(run(db, args.start, args.end, args.max_pages)))
+            if args.incremental_from:
+                result = run_incremental(db, args.incremental_from, args.max_pages)
+            else:
+                result = run(db, args.start, args.end, args.max_pages)
+            print(json.dumps(result))
 
 
 if __name__ == "__main__":
