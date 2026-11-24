@@ -73,6 +73,16 @@ async function refresh() {
   report.replaceChildren();
   for (const metric of result.report) row(metric.source + ' · ' + metric.status + ' · ' + metric.count,report);
   if (!result.report.length) row('No enquiries imported.',report);
+  const checks = document.getElementById('checks');
+  checks.replaceChildren();
+  if (result.checks) {
+    const snapshot = result.checks;
+    row('Last check · ' + new Date(snapshot.checked_at).toLocaleString('en-ZA',{timeZone:'Africa/Johannesburg'}),checks);
+    row('National Treasury source · ' + snapshot.treasury_health,checks);
+    row('Follow-ups due · ' + snapshot.followups_due,checks);
+    row('Fleet records to review · ' + snapshot.fleet_alerts,checks);
+    row('Driver records to review · ' + snapshot.driver_alerts,checks);
+  } else row('Awaiting the first scheduled check.',checks);
   await showLead();
 }
 

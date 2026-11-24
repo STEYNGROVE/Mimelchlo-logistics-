@@ -33,11 +33,12 @@ export default async function (req, res) {
         const {rows} = await db.query('SELECT id,terms,cost_cents,total_cents,created_at,approved_at FROM commercial_quotes WHERE reference=$1 ORDER BY id DESC LIMIT 100',[reference]);
         return res.json({quotes:rows});
       }
-      const [leads, report] = await Promise.all([
+      const [leads, report, checks] = await Promise.all([
         db.query('SELECT reference,received_at,submission,status,follow_up,revision FROM commercial_leads ORDER BY (follow_up<=CURRENT_DATE) DESC NULLS LAST,sequence DESC LIMIT 100'),
-        db.query("SELECT submission->>'source' AS source,status,COUNT(*)::int AS count FROM commercial_leads GROUP BY 1,2 ORDER BY 1,2")
+        db.query("SELECT submission->>'source' AS source,status,COUNT(*)::int AS count FROM commercial_leads GROUP BY 1,2 ORDER BY 1,2"),
+        db.query("SELECT checked_at,treasury_health,followups_due,fleet_alerts,driver_alerts FROM commercial_operational_checks ORDER BY check_date DESC LIMIT 1")
       ]);
-      return res.json({leads:leads.rows,report:report.rows});
+      return res.json({leads:leads.rows,report:report.rows,checks:checks.rows[0] || null});
     }
     if (req.headers?.origin && (req.headers.origin !== 'https://mimelchlo-nexus.hatchable.site' ||
         !req.headers['content-type']?.startsWith('application/json'))) return res.status(403).json({error:'Origin rejected'});

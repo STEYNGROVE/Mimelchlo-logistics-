@@ -96,6 +96,7 @@ async function verify(browser, name, options) {
     await page.getByRole('link', {name:'Afrikaans'}).click();
     assert.equal(await page.locator('html').getAttribute('lang'), 'af-ZA');
     assert.match(await page.locator('h1').innerText(), /SLIM VERVOER/);
+    await page.locator('#trailer option').first().waitFor({state:'attached'});
     await page.getByLabel('Vragsoort').selectOption('temperature');
     assert.match(await page.locator('#guidance').innerText(), /Lys bruto massa/);
     assert.match(await page.locator('#trailer-name').innerText(), /Gordynsleepwa/);

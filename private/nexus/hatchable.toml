@@ -1,3 +1,7 @@
 [[cron]]
 path = "/api/commercial-schedule"
 schedule = "12 * * * *"
+
+[[cron]]
+path = "/api/operational-checks"
+schedule = "20 19 * * *"
