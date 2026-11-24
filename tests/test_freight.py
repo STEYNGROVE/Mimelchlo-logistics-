@@ -6,9 +6,10 @@ from tempfile import TemporaryDirectory
 import unittest
 
 from freight.backup import backup
-from freight.discovery import migrate, run
+from freight.discovery import migrate, run, run_incremental
 from freight.etenders import normalize, page_url, read_page
 from freight.profit import OperatingCosts, estimate
+from freight.review import review
 
 START = date(2026, 11, 20)
 END = date(2026, 11, 22)
@@ -46,6 +47,16 @@ class FreightTests(unittest.TestCase):
             "SELECT tender_state, status FROM freight_review_queue"
         ).fetchall(), [("expired", "UNVERIFIED")])
 
+    def test_incremental_advances_only_after_terminal_page(self):
+        def reader(start, end, page):
+            return [RELEASE], page == 1, page_url(start, end, page)
+        today = date(2026, 11, 22)
+        result = run_incremental(self.db, START, 1, today, reader)
+        self.assertEqual(result["outcome"], "pending")
+        self.assertEqual(self.db.execute("SELECT starts FROM freight_incremental").fetchone()[0], "2026-11-20")
+        self.assertEqual(run_incremental(self.db, START, 1, today, reader)["outcome"], "complete")
+        self.assertEqual(run_incremental(self.db, START, 1, today, reader)["outcome"], "caught_up")
+
     def test_outage_keeps_checkpoint(self):
         def outage(*_):
             raise TimeoutError
@@ -60,6 +71,15 @@ class FreightTests(unittest.TestCase):
         self.assertNotIn("rate_zar", item)
         unrelated = {**RELEASE, "tender": {"title": "Student transportation"}}
         self.assertIsNone(normalize(unrelated, item["source_url"]))
+
+    def test_review_rejects_stale_verification_and_audits_rejection(self):
+        run(self.db, START, END, 1, lambda *_: ([RELEASE], False, page_url(START, END, 1)))
+        with self.assertRaises(ValueError):
+            review(self.db, RELEASE["ocid"], "VERIFIED", "Reviewed at source")
+        review(self.db, RELEASE["ocid"], "REJECTED", "Past deadline")
+        self.assertEqual(self.db.execute(
+            "SELECT previous_status, decision FROM freight_reviews"
+        ).fetchone(), ("UNVERIFIED", "REJECTED"))
 
     def test_backup_restores_database(self):
         with TemporaryDirectory() as directory:
