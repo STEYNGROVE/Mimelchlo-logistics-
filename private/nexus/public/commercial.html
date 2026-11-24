@@ -15,6 +15,11 @@
 <h3>Internal quote</h3><p>Enter staff-verified figures. Approval is internal. No quotation is sent and no booking is made.</p>
 <form id="quote">
 <div class="inputs">
+<label>Confirmed collection<input name="from" maxlength="120" required></label>
+<label>Confirmed delivery<input name="to" maxlength="120" required></label>
+<label>Confirmed cargo type<input name="cargo" maxlength="120" required></label>
+<label>Gross cargo mass (kg)<input name="mass" type="number" min="1" max="1000000" required></label>
+<label>Required pallet spaces<input name="pallets" type="number" min="0" max="1000" required></label>
 <label>Distance in km<input name="km" type="number" min="1" max="100000" required></label>
 <label>Linehaul operating cost per km (R)<input name="perKmCents" type="number" step=".01" min="0" max="100000" required></label>
 <label>Fuel surcharge (R)<input name="fuelCents" type="number" step=".01" min="0" max="10000000" value="0" required></label>

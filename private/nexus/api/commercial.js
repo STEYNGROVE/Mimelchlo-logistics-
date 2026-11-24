@@ -42,7 +42,8 @@ function calculateQuote(input, route) {
     typeof input.verification !== 'string' || !input.verification.trim() || input.verification.length > 500) return null;
   const {km,perKmCents,fuelCents,tollCents,handlingCents,marginBps,payloadKg,palletSlots,distanceSource,verification} = input;
   const cost = km * perKmCents + fuelCents + tollCents + handlingCents;
-  return {cost,total:cost + Math.round(cost * marginBps / 10000),
+  const markup = Number((BigInt(cost) * BigInt(marginBps) + 5000n) / 10000n);
+  return {cost,total:cost + markup,
     terms:{km,perKmCents,fuelCents,tollCents,handlingCents,marginBps,payloadKg,palletSlots,distanceSource,verification:verification.trim(),route}};
 }
 
@@ -62,6 +63,8 @@ export default async function (req, res) {
       ]);
       return res.json({leads:leads.rows,report:report.rows});
     }
+    if (req.headers?.origin && (req.headers.origin !== 'https://mimelchlo-nexus.hatchable.site' ||
+        !req.headers['content-type']?.startsWith('application/json'))) return res.status(403).json({error:'Origin rejected'});
     const body = req.body || {};
     if (body.action === 'sync') return res.json(await sync());
     if (typeof body.reference !== 'string' || !uuid.test(body.reference)) return res.status(400).json({error:'Invalid reference'});
@@ -76,7 +79,12 @@ export default async function (req, res) {
     }
     if (body.action === 'draft') {
       const {rows:[lead]} = await db.query('SELECT submission FROM commercial_leads WHERE reference=$1',[body.reference]);
-      const quote = calculateQuote(body.costs,lead?.submission?.route);
+      const data = body.requirements;
+      if (!lead || !data ||
+        !['from','to','cargo'].every(key => typeof data[key] === 'string' && data[key].trim() && data[key].length <= 120) ||
+        data.from.trim().toLowerCase() === data.to.trim().toLowerCase()) return res.status(400).json({error:'Confirm collection, delivery and cargo'});
+      const route = {from:data.from.trim(),to:data.to.trim(),cargo:data.cargo.trim(),mass:data.mass,pallets:data.pallets};
+      const quote = calculateQuote(body.costs,route);
       if (!quote) return res.status(400).json({error:'Complete verification and check that cargo fits the confirmed payload and pallet limits'});
       const {rows:[draft]} = await db.query('INSERT INTO commercial_quotes(reference,terms,cost_cents,total_cents) VALUES($1,$2::jsonb,$3,$4) RETURNING id',
         [body.reference,JSON.stringify(quote.terms),quote.cost,quote.total]);

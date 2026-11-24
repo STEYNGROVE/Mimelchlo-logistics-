@@ -38,6 +38,7 @@ async function showLead() {
   leadForm.elements.status.value = lead.status;
   leadForm.elements.followUp.value = lead.follow_up?.slice(0,10) || '';
   quoteForm.reset();
+  for (const key of ['from','to','cargo','mass','pallets']) quoteForm.elements[key].value = route?.[key] ?? '';
   quoteForm.elements.km.value = route ? Math.ceil(route.distance) : '';
   const list = document.getElementById('quotes');
   list.replaceChildren();
@@ -100,10 +101,11 @@ quoteForm.addEventListener('submit',event => {
   event.preventDefault();
   perform(event.submitter,async () => {
     const raw = Object.fromEntries(new FormData(quoteForm));
-    const costs = {...raw};
+    const {from,to,cargo,mass,pallets,...costs} = raw;
+    const requirements = {from,to,cargo,mass:Number(mass),pallets:Number(pallets)};
     for (const key of ['km','payloadKg','palletSlots']) costs[key] = Number(raw[key]);
     for (const key of ['perKmCents','fuelCents','tollCents','handlingCents','marginBps']) costs[key] = Math.round(Number(raw[key])*100);
-    await api({action:'draft',reference:select.value,costs});
+    await api({action:'draft',reference:select.value,costs,requirements});
     await showLead();
     return 'Internal quote draft saved.';
   });
