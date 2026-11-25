@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS nexus_dispatch_audit (
 
 CREATE OR REPLACE FUNCTION nexus_verify_dispatch(
   shipment uuid, vehicle uuid, trailer uuid, driver uuid, until_time timestamptz
-) RETURNS void LANGUAGE plpgsql SET search_path=public AS $$
+) RETURNS void LANGUAGE plpgsql AS $$
 DECLARE must_be_valid_through date := (until_time AT TIME ZONE 'Africa/Johannesburg')::date;
 BEGIN
   -- A shared lock serializes emergency disabling with new departures.
@@ -83,7 +83,7 @@ END $$;
 
 CREATE OR REPLACE FUNCTION nexus_reserve_dispatch(
   shipment uuid, vehicle uuid, trailer uuid, driver uuid, starts timestamptz, ends timestamptz, by_actor text
-) RETURNS uuid LANGUAGE plpgsql SET search_path=public AS $$
+) RETURNS uuid LANGUAGE plpgsql AS $$
 DECLARE job uuid;
 BEGIN
   IF starts<now() OR starts>=ends OR starts IS NULL OR ends IS NULL OR nullif(btrim(by_actor),'') IS NULL THEN
@@ -97,8 +97,8 @@ BEGIN
 END $$;
 
 CREATE OR REPLACE FUNCTION nexus_transition_dispatch(job_id uuid,next_state text,expected integer,by_actor text)
-RETURNS integer LANGUAGE plpgsql SET search_path=public AS $$
-DECLARE job nexus_dispatch_jobs;
+RETURNS integer LANGUAGE plpgsql AS $$
+DECLARE job record;
 BEGIN
   SELECT * INTO job FROM nexus_dispatch_jobs WHERE id=job_id FOR UPDATE;
   IF NOT FOUND OR job.version IS DISTINCT FROM expected OR nullif(btrim(by_actor),'') IS NULL OR NOT coalesce((

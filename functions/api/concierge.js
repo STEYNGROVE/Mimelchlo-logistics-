@@ -34,7 +34,7 @@ function configuration(env) {
 }
 async function describe(config,input) {
   const text = await providers[config.provider](config.key,input);
-  if (typeof text!=='string' || !text.trim() || text.length>1600 || /(?:\bZAR\b|\bUSD\b|[R$€£]\s*\d)/iu.test(text)) throw new Error('Invalid response');
+  if (typeof text!=='string' || !text.trim() || text.length>1600 || /(?:\bZAR\b|\bUSD\b|(?:\bR|[$€£])\s*\d)/iu.test(text)) throw new Error('Invalid response');
   return {guidance:text.trim(),advisory:true};
 }
 
