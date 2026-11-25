@@ -16,18 +16,9 @@ The CRM displays lead status, cargo and customer requirements, follow-up dates, 
 4. Save an internal draft, review its totals and approve only after the actual commercial and operating conditions are checked.
 5. Retain or remove submitted personal data according to the owner's approved policy across the D1 inbox and Hatchable CRM. Review access and rotate the intake relay credential as part of routine operations.
 
-## Consolidated owner checklist
+## Owner actions
 
-- [ ] Confirm which staff should have Hatchable administrator access and agree a retention and deletion policy for the intake inbox and CRM.
-- [ ] Approve the monitored business telephone, reply channel and permitted follow-up procedures. Provide evidence of ownership and authorize any later automated communication separately.
-- [ ] Supply an authorized routing API account, its terms and hard budget limits. Confirm a heavy-vehicle routing source that covers South Africa and required restrictions.
-- [ ] Choose the customer identity plane and provide test identities, shipment ownership mappings, document repositories and access rules. Keep the existing staff project private.
-- [ ] Confirm free AI capacity and a hard spending ceiling before enabling model requests. Keep financial estimates and operational checks deterministic.
-- [ ] Select a monitored private runtime for the existing Python freight discovery importer and approved matching workflows. The Hatchable scheduler already runs enquiry imports, source reachability checks and internal follow-up and compliance counts.
-- [ ] Approve verified freight sources, commercial qualification criteria, permitted acquisition channels and a policy for reviewing candidate matches before outreach.
-- [ ] Supply fleet, driver, document and financial operational requirements, verified records and test accounts before activating production transport-management and SaaS workflows.
-- [ ] Review the delivered Afrikaans commercial copy and prioritize further South African languages. Static and runtime phrase files can be added under `localization/`.
-- [ ] Approve retention, recovery ownership, incident procedures and legal requirements covering customer data, insurance, commercial authorization and regulatory obligations.
+Use the [consolidated Infinity checklist](INFINITY_COMPLETION.md#consolidated-owner-actions).
 
 ## Deployment verification
 
