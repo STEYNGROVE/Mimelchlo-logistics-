@@ -28,6 +28,19 @@ async function verify(browser, name, options) {
     assert.match(await page.locator('h1').innerText(), /INTELLIGENT MOVEMENT/);
     assert.equal(await page.locator('a[href*="hatchable"]').count(), 0);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true);
+    const logo = page.locator('.hero-logo');
+    await logo.evaluate(image => image.decode());
+    const [crest, header, headline] = await Promise.all([
+      logo.boundingBox(), page.locator('.top .brand img').boundingBox(), page.locator('h1').boundingBox()
+    ]);
+    const viewport = page.viewportSize();
+    const mobile = viewport.width <= 700;
+    assert.equal(crest.width, mobile ? 260 : 380);
+    assert.equal(crest.height, crest.width);
+    assert.equal(header.width, mobile ? 85 : 110);
+    assert.ok(crest.x >= 0 && crest.x + crest.width <= viewport.width);
+    assert.ok(crest.y + crest.height <= Math.min(headline.y, viewport.height));
+    await page.screenshot({path:'evidence/' + prefix + 'crest-' + name + '.png'});
     await page.keyboard.press('Tab');
     assert.equal(await page.locator(':focus').innerText(), 'Skip to content');
 
