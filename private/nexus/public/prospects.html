@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en-ZA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>NEXUS | Prospect evidence</title><link rel="stylesheet" href="/commercial.css"><script src="/prospects.js" defer></script></head>
+<body><main><a href="/commercial.html">Commercial command centre</a><h1>Prospect evidence</h1>
+<p>Record public business evidence and verified business-only contacts. Review drafts before any authorized communication.</p>
+<p id="prospect-status" role="status"></p>
+<form id="prospect-form">
+  <label>Business name<input name="business" maxlength="160" required></label>
+  <label>HTTPS evidence URL<input name="source" type="url" maxlength="1500" required></label>
+  <label>What the source shows<textarea name="summary" maxlength="1600" required></textarea></label>
+  <label>Industry<select name="industry"><option value="agriculture">Agriculture</option><option value="mining">Mining</option><option value="industrial">Industrial</option><option value="container">Container freight</option><option value="distribution">Distribution</option><option value="other">Other</option></select></label>
+  <label>Location<input name="location" maxlength="140" required></label>
+  <label>Potential transport requirement<textarea name="requirement" maxlength="1600" required></textarea></label>
+  <label>Authorized business contact<input name="contact" maxlength="200"></label>
+  <label>Contact ownership and authorization evidence URL<input name="contactEvidence" type="url" maxlength="1500"></label>
+  <label>Confirm business-only contact is authorized<select name="contactAuthorized"><option value="no">No contact entered</option><option value="yes">Verified and authorized</option></select></label>
+  <label>Evidence-supported value (R)<input name="estimate" type="number" min="0" max="10000000000" step=".01"></label>
+  <label>Valuation evidence URL<input name="valueEvidence" type="url" maxlength="1500"></label>
+  <button>Save prospect</button>
+</form>
+<h2>Conversion by industry and status</h2><ul id="prospect-counts"></ul>
+<h2>Prospects</h2><div id="prospect-list"></div></main></body></html>

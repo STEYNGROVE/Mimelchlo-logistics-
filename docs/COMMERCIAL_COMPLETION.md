@@ -1,5 +1,7 @@
 # NEXUS commercial integration
 
+Current release status and owner actions are in the [Infinity release and blocker register](INFINITY_COMPLETION.md).
+
 ## Operational scope
 
 The English and Afrikaans public Pages site accepts user-initiated enquiry submissions. Download remains available. Static assets bypass Pages Functions. Intake stores a validated request in a separate D1 database for each environment and returns an opaque reference. The production relay reads only enquiry records, in insertion order, using a dedicated server credential. The private Hatchable CRM imports them in bounded, retryable batches. It remains on the existing collaborator-only project. No browser on the public site receives the relay credential or the private service address.

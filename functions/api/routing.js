@@ -1,6 +1,6 @@
 import {gateway,parseJson} from '../lib/provider.js';
 
-const base = 'https://api.openrouteservice.org';
+const base = 'https://api.heigit.org';
 const point = value => Array.isArray(value) && value.length===2 && value.every(Number.isFinite)
   && value[0]>=16 && value[0]<=33 && value[1]>=-35 && value[1]<=-22;
 const roundedPoint = value => value.map(x=>Math.round(x*100000)/100000);
@@ -21,7 +21,7 @@ async function route(key,input) {
   const headers = {Authorization:key,Accept:'application/json, application/geo+json'};
   if (input.operation === 'search') {
     const query = new URLSearchParams({text:input.query,'boundary.country':'ZA',size:'5'});
-    const response = await fetch(base+'/geocode/search?'+query,{headers,redirect:'error',signal:AbortSignal.timeout(6000)});
+    const response = await fetch(base+'/pelias/v1/search?'+query,{headers,redirect:'error',signal:AbortSignal.timeout(6000)});
     if (!response.ok) throw new Error('Geocoder unavailable');
     const {features} = await parseJson(response.body,200000);
     return {attribution:'openrouteservice.org · OpenStreetMap contributors',results:features.slice(0,5)
@@ -29,7 +29,7 @@ async function route(key,input) {
       .map(item=>({label:item.properties.label.slice(0,160),coordinates:roundedPoint(item.geometry.coordinates)}))};
   }
   const coordinates = input.returnTrip ? [...input.coordinates,input.coordinates[0]] : input.coordinates;
-  const response = await fetch(base+'/v2/directions/driving-car/geojson',{
+  const response = await fetch(base+'/openrouteservice/v2/directions/driving-car/geojson',{
     method:'POST',headers:{...headers,'Content-Type':'application/json'},
     body:JSON.stringify({coordinates,instructions:false,geometry_simplify:true}),
     redirect:'error',signal:AbortSignal.timeout(8000)

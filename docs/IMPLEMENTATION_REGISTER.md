@@ -1,5 +1,7 @@
 # Implementation register
 
+Current release status and owner actions are in the [Infinity release and blocker register](INFINITY_COMPLETION.md).
+
 See the [commercial integration completion report and owner checklist](COMMERCIAL_COMPLETION.md) for current release evidence and owner actions.
 | Component | Implementation | Test and deployment evidence |
 | --- | --- | --- |
