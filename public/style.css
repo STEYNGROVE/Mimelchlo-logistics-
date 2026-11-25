@@ -13,6 +13,8 @@ button.secondary:hover,a.secondary:hover{background:#363641}
 .top{display:flex;align-items:center;justify-content:space-between;gap:.7rem 1.5rem;flex-wrap:wrap;padding:.65rem max(4vw,1rem);border-bottom:1px solid var(--border)}
 .brand{display:flex;gap:.7rem;align-items:center;color:var(--white);letter-spacing:.08em;text-decoration:none;font-size:.9rem}
 .brand img,.hero-logo{border-radius:.35rem}
+.brand img{width:72px;height:72px;flex:none}
+.hero-logo{width:clamp(136px,15vw,184px);height:auto;box-shadow:0 8px 36px #0008}
 .brand span{color:var(--silver)}
 nav{display:flex;flex-wrap:wrap;gap:.1rem 1.3rem}
 nav a{color:var(--white);padding:.6rem 0;display:inline-block}
@@ -62,7 +64,7 @@ dd{margin:0 0 .65rem;font-weight:700}
 footer{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;padding:1.4rem max(4vw,1rem);color:var(--silver)}
 .low-data .hero::before{background:linear-gradient(125deg,#16161c,#2c2028)}
 .low-data *{animation:none!important}
-@media(max-width:700px){.split{grid-template-columns:1fr}.hero{min-height:570px}.hero::before{background:linear-gradient(0deg,#101014 9%,#101014de 36%,#10101445),url('/freight-small.webp') 70% top/cover}.hero-inner{align-self:end;padding-bottom:3.2rem}.top nav{order:3;width:100%}}
+@media(max-width:700px){.brand img{width:60px;height:60px}.hero-logo{width:136px}.split{grid-template-columns:1fr}.hero{min-height:570px}.hero::before{background:linear-gradient(0deg,#101014 9%,#101014de 36%,#10101445),url('/freight-small.webp') 70% top/cover}.hero-inner{align-self:end;padding-bottom:3.2rem}.top nav{order:3;width:100%}}
 @media(max-width:390px){.fields{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important}}
 @media(prefers-reduced-data:reduce){.hero::before{background:linear-gradient(125deg,#16161c,#2c2028)}}

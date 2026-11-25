@@ -1,6 +1,6 @@
 'use strict';
 
-const cacheName = 'mimelchlo-public-v4';
+const cacheName = 'mimelchlo-public-v5';
 const shell = ['/', '/af/', '/af/locale.js', '/style.css', '/brand.webp', '/quote.js', '/experience.js', '/enquiry.js', '/providers.js', '/manifest.webmanifest'];
 
 self.addEventListener('install', event => {
