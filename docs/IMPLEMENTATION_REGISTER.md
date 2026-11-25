@@ -11,10 +11,10 @@ See the [commercial integration completion report and owner checklist](COMMERCIA
 | Other revenue sources | Not implemented. National Treasury data covers the country subject to publisher participation. | Province matching supports explicitly supplied regions. Coverage and completeness across nine provinces unverified. |
 | Profit and backhaul | Implemented reusable calculations and ranking. | Tested with synthetic inputs. Route, shipment and dashboard integration unimplemented. |
 | Fleet, driver, records, compliance, shipments | Existing Hatchable APIs, tables and UI components provide basic record management. | Live route presence and signed-out denial verified. Full authenticated workflows unverified. |
-| Dispatch, fleet allocation, routes, tracking and POD | Not implemented. | No transactional dispatch or verified compliance gate. |
+| Dispatch and field operations | Private transactional reservation and evidence gates are deployed in disabled mode. Driver application, live GPS and proof-of-delivery workflow remain open. | Local conflict and transition tests passed. The deployed API rejected a reservation while disabled. |
 | CRM relay and dashboard | Shipped private commercial command centre and idempotent enquiry import. | Deployed end-to-end enquiry, quote and role checks. SQLite procurement sync remains open. |
-| Customer and driver portals | Not implemented. | Role, ownership and tenant tests pending. |
-| Finance and documentation | Trip estimates implemented. Invoicing, actual profitability, debtor aging, cash flow and accounting exports not implemented. | Synthetic calculation test only. |
+| Customer portal | Bilingual UI and scoped Supabase adapters delivered with activation disabled. | Local role, ownership and tenant fixture passed. Dedicated hosted project, SMTP and driver application remain open. |
+| Finance and documentation | Trip estimates and local tools for draft totals, payment allocation, debtor aging, statement export and cash-flow scenarios. Customer document access uses a scoped private bucket when configured. | Synthetic finance and PostgreSQL tests passed. Live accounting and OCR remain open. |
 | Marketplace and SaaS | Not implemented. | Paid brokerage, billing and payment processing inactive. |
 | Scheduling | Hatchable runs hourly enquiry imports and daily internal operational checks. Incremental procurement importer runs separately. | Hourly scheduler observed; see current release report for operational-check evidence. |
 | Recovery | SQLite point-in-time copy and integrity verification implemented. | Restore from test backup verified. Actual private backup passed integrity check. Off-device encryption and restoration drill pending. |
