@@ -66,7 +66,7 @@ async function verify(browser, name, options) {
       assert.equal((await request.post(intake,{data:{}})).status(), 403);
       assert.equal((await request.post(intake,{headers:{Origin:new URL(url).origin},data:{}})).status(), 400);
       await page.getByRole('button',{name:'Send enquiry'}).waitFor();
-      if (url.includes('nexus-commercial-integration') && name === 'desktop') {
+      if (/nexus-(commercial-integration|infinity)/.test(url) && name === 'desktop') {
         await page.getByLabel('Reply email').fill('enquiry-test@example.invalid');
         await page.getByLabel('I agree that Mimelchlo Logistics', {exact:false}).check();
         await page.getByRole('button',{name:'Send enquiry'}).click();
@@ -87,6 +87,25 @@ async function verify(browser, name, options) {
     assert.match(draft, /Bethlehem → Durban/);
     await page.getByLabel('What do you need help with?').selectOption('docs');
     assert.match(await page.locator('#guidance').innerText(), /packing list/);
+    if (url.startsWith('https:')) {
+      for (const path of ['routing','concierge','account?status=1']) {
+        const provider = await context.request.get(new URL('api/'+path,url).href);
+        assert.equal(provider.status(),200);
+        assert.equal(typeof (await provider.json()).available,'boolean');
+        const rejected = await context.request.post(new URL('api/'+path,url).href,{data:{}});
+        assert.equal(rejected.status(),403);
+      }
+    }
+    if (url.startsWith('https:')) {
+      const availability = await context.request.get(new URL('api/account?status=1',url).href);
+      if (!(await availability.json()).available) {
+        const portal = await context.newPage();
+        await portal.goto(new URL('account/?lang=af',url).href);
+        await portal.getByText(/Aanlyn rekeningtoegang is tans nie beskikbaar nie/).waitFor();
+        assert.equal(await portal.locator('html').getAttribute('lang'),'af-ZA');
+        await portal.close();
+      }
+    }
     const lowData = page.getByRole('button', {name:'Low data'});
     await lowData.click();
     assert.equal(await lowData.getAttribute('aria-pressed'), 'true');

@@ -1,1 +1,1 @@
-{"version":1,"include":["/api/enquiries","/api/enquiry-relay"],"exclude":[]}
+{"version":1,"include":["/api/enquiries","/api/enquiry-relay","/api/routing","/api/concierge","/api/account"],"exclude":[]}

@@ -1,7 +1,7 @@
 'use strict';
 
-const cacheName = 'mimelchlo-public-v3';
-const shell = ['/', '/af/', '/af/locale.js', '/style.css', '/brand.webp', '/quote.js', '/experience.js', '/enquiry.js', '/manifest.webmanifest'];
+const cacheName = 'mimelchlo-public-v4';
+const shell = ['/', '/af/', '/af/locale.js', '/style.css', '/brand.webp', '/quote.js', '/experience.js', '/enquiry.js', '/providers.js', '/manifest.webmanifest'];
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(cacheName).then(cache => cache.addAll(shell)));

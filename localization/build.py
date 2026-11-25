@@ -30,6 +30,7 @@ for path, locale in languages.items():
     page = page.replace('<script src="/quote.js" defer></script>', f'<script src="/{path}/locale.js" defer></script>\n<script src="/quote.js" defer></script>')
     page = page.replace('<a href="/af/" lang="af-ZA">Afrikaans</a>', '<a href="/" lang="en-ZA">English</a>')
     page = page.replace('<a class="brand" href="/"', f'<a class="brand" href="/{path}/"')
+    page = page.replace('href="/account/"', f'href="/account/?lang={path}"')
     (public / path / "index.html").write_text(page)
     runtime = dict(line.split("\t", 1) for line in (root / "localization" / f"{path}-dynamic.tsv").read_text().splitlines())
     (public / path / "locale.js").write_text("window.translations = " + json.dumps(runtime, ensure_ascii=False, indent=2) + ";\n")
